@@ -493,41 +493,6 @@
 							}
 					},
 
-					{
-						name: 'Open from Dance Station',
-						action: function () {
-							if (window.DanceStationAudioMassBridge && window.DanceStationAudioMassBridge.requestAssets) {
-								window.DanceStationAudioMassBridge.requestAssets ();
-							} else {
-								app.fireEvent ('RequestDisplayMessage', 'Dance Station bridge is not available.');
-							}
-						}
-					},
-
-					{
-						name: 'Save to Dance Station',
-						action: function () {
-							if (window.DanceStationAudioMassBridge && window.DanceStationAudioMassBridge.exportToDanceStation) {
-								window.DanceStationAudioMassBridge.exportToDanceStation ('dance-station-edit.wav');
-							} else {
-								app.fireEvent ('RequestDisplayMessage', 'Dance Station bridge is not available.');
-							}
-						},
-						clss: 'pk_inact',
-						setup: function ( obj ) {
-							function setReady () {
-								if (app.engine && app.engine.is_ready)
-									obj.classList.remove ('pk_inact');
-								else
-									obj.classList.add ('pk_inact');
-							}
-
-							app.listenFor ('DidUnloadFile', setReady);
-							app.listenFor ('DidLoadFile', setReady);
-							setReady ();
-						}
-					},
-
 			                    {
 						name: 'Load from Computer',
 						type: 'file',
