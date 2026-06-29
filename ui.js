@@ -495,6 +495,7 @@
 
 					{
 						name: 'Load from Computer',
+						type: 'file',
 						action: function ( input ) {
 							if (input && input.files) {
 								app.fireEvent ('RequestLoadLocalInput', input);
@@ -1493,7 +1494,7 @@
 				}
 				else
 				{
-					btn_container.className = 'pk_menu_el';
+					btn_container.className = 'pk_menu_el' + (curr_obj.type === 'file' ? ' pk_menu_file' : '');
 					var btn = d.createElement ( 'button' );
 					btn.className = 'pk_opt ' + (curr_obj.clss ? curr_obj.clss : '');
 					btn.setAttribute ( 'tab-index', '-1' );
@@ -1501,7 +1502,24 @@
 					btn.innerHTML = curr_obj.name;
 					btn_container.appendChild ( btn );
 
-					if (curr_obj.action)
+					if (curr_obj.type === 'file' && curr_obj.action)
+					{
+						(function ( btn_container, action ) {
+							var fileInput = d.createElement ('input');
+							fileInput.type = 'file';
+							fileInput.accept = 'audio/*,.amss';
+							fileInput.className = 'pk_menu_file_input';
+							fileInput.onchange = function () {
+								if (!fileInput.files || !fileInput.files.length) return ;
+								var selectedFile = fileInput.files[0];
+								q.closeMenu ();
+								action ({ files: [ selectedFile ] });
+								fileInput.value = '';
+							};
+							btn_container.appendChild ( fileInput );
+						})( btn_container, curr_obj.action );
+					}
+					else if (curr_obj.action)
 					{
 						(function ( btn, action ) {
 							btn.onclick = function ( obj ) {
