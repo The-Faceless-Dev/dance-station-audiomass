@@ -91,13 +91,14 @@
       window.DanceStationAudioMassBridge.error("No audio data was provided.");
       return;
     }
-    if (!editor || !editor.engine || !editor.engine.LoadArrayBuffer) {
+    if (!editor || !editor.engine || (!editor.engine.ForceLoadBlob && !editor.engine.LoadArrayBuffer)) {
       window.DanceStationAudioMassBridge.error("AudioMass is not ready to load audio yet.");
       return;
     }
     try {
       const blob = new Blob([buffer], { type: mimeType || "audio/wav" });
-      editor.engine.LoadArrayBuffer(blob);
+      if (editor.engine.ForceLoadBlob) editor.engine.ForceLoadBlob(blob);
+      else editor.engine.LoadArrayBuffer(blob);
       window.DanceStationAudioMassBridge.loaded({ sourceName: name || "" });
     } catch (error) {
       window.DanceStationAudioMassBridge.error(error && error.message ? error.message : String(error));

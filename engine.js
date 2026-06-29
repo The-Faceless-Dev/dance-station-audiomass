@@ -41,6 +41,28 @@
 			if (type.indexOf ('audio/') === 0) return true;
 			return loadableAudioExtensions.test (file.name || '');
 		}
+		function loadBlobAsNew ( blob ) {
+			if (!blob) return ;
+			app.listenFor ('RequestCancelModal', function() {
+				wavesurfer.cancelBufferLoad ();
+				AudioUtils.DownloadFileCancel ();
+				if (wavesurfer.arraybuffer) q.is_ready = true;
+
+				app.fireEvent ('RequestResize');
+				setTimeout(function() { app.fireEvent ('DidDownloadFile'); }, 12);
+				app.stopListeningForName ('RequestCancelModal');
+
+				OneUp ('Canceled Loading', 1350);
+			});
+
+			app.fireEvent ('RequestZoomUI', 0);
+			app.fireEvent ('WillDownloadFile');
+			q.is_ready = false;
+			wavesurfer.backend._add = 0;
+			wavesurfer.loadBlob ( blob );
+			app.fireEvent ('DidUnloadFile');
+			wavesurfer.regions && wavesurfer.regions.clear();
+		}
 
 		this.TrimTo = function( val, num ) {
 			var nums = {'0':1, '1':10, '2':100,'3':1000,'4':10000,'5':100000};
@@ -152,6 +174,10 @@
 			wavesurfer.backend._add = 0;
 			func ();
 			// ---
+		};
+
+		this.ForceLoadBlob = function ( blob ) {
+			loadBlobAsNew ( blob );
 		};
 
 		this.LoadDB = function ( e ) {
@@ -907,7 +933,7 @@
 					app.multitrack.LoadSessionFiles ( fileInput.files ))
 				{}
 				else if (app.fireEvent ('RequestLoadPickedFiles', fileInput.files) !== true)
-					q.LoadFile ( fileInput );
+					q.ForceLoadBlob ( file );
 			}
 
 			app.listenFor ('RequestLoadLocalInput', function ( pickedInput ) {
