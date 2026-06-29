@@ -1098,6 +1098,12 @@
 			// function forceDownload ( mp3Data ) {
 			// 	var blob = new Blob (mp3Data, {type:'audio/mp3'});
 			function forceDownload ( blob ) {
+				var bridge = window.DanceStationAudioMassBridge;
+				if (bridge && bridge.downloadFile && bridge.downloadFile(blob, with_name ? with_name : 'output.mp3')) {
+					callback && callback ('done');
+					return ;
+				}
+
 				var url = (window.URL || window.webkitURL).createObjectURL(blob);
 
 				var a = document.createElement( 'a' );

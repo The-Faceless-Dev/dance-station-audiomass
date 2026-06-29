@@ -131,6 +131,25 @@
     }
   }
 
+  function downloadFile(blob, name) {
+    if (mode !== "site" || !blob || !blob.arrayBuffer) return false;
+    blob.arrayBuffer().then(function (buffer) {
+      window.parent.postMessage({
+        source: "dance-station-audiomass",
+        type: "dance-station:native-download",
+        mode,
+        payload: {
+          name: name || "audiomass-output.mp3",
+          mimeType: blob.type || "application/octet-stream",
+          buffer,
+        },
+      }, "*", [buffer]);
+    }).catch(function (error) {
+      window.DanceStationAudioMassBridge.error(error && error.message ? error.message : String(error));
+    });
+    return true;
+  }
+
   function state() {
     return {
       mode,
@@ -154,6 +173,7 @@
     },
     loadAudio,
     exportToDanceStation,
+    downloadFile,
     ready: function () {
       emit("dance-station:audiomass-ready", state());
     },

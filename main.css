@@ -221,7 +221,9 @@ a{
 }
 .pk_hover_dur{top:26px;color:var(--fg-1)}
 
-.pk_inpfile{position:absolute;width:1px;height:1px;visibility:hidden;overflow:hidden;z-index:-1}
+.pk_inpfile{position:absolute;width:1px;height:1px;opacity:0;overflow:hidden;z-index:-1}
+.pk_menu_file{position:relative}
+.pk_menu_file_input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;z-index:2}
 
 .pk_tmpMsg{
 	position:absolute;left:50%;top:50%;

@@ -898,6 +898,21 @@
 
 		(function() {
 			var input = null;
+			function loadInput ( input ) {
+				if (app.multitrack &&
+					app.multitrack.LoadSessionFiles &&
+					app.multitrack.LoadSessionFiles ( input.files ))
+				{}
+				else if (app.fireEvent ('RequestLoadPickedFiles', input.files) !== true)
+					q.LoadFile ( input );
+			}
+
+			app.listenFor ('RequestLoadLocalInput', function ( pickedInput ) {
+				if (!pickedInput || !pickedInput.files || !pickedInput.files.length) return ;
+				wavesurfer.pause();
+				loadInput ( pickedInput );
+			});
+
 			app.listenFor ('RequestLoadLocalFile', function () {
 				wavesurfer.pause();
 
@@ -912,12 +927,7 @@
 				input.setAttribute ('accept', 'audio/*,.amss');
 				input.className = 'pk_inpfile';
 				input.onchange = function () {
-					if (app.multitrack &&
-						app.multitrack.LoadSessionFiles &&
-						app.multitrack.LoadSessionFiles ( input.files ))
-					{}
-					else if (app.fireEvent ('RequestLoadPickedFiles', input.files) !== true)
-						q.LoadFile ( input );
+					loadInput ( input );
 
 					input.parentNode.removeChild( input );
 					input.onchange = null;
