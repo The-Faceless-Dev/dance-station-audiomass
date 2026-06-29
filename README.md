@@ -25,7 +25,7 @@ AudioMass now ships with a full multitrack mode -- layer multiple tracks, drag c
 ---
 
 If you want to build the all.build.js minified file for delivery/publishing this then you can use uglify and run as:
-```cat dist/wavesurfer.js dist/plugin/wavesurfer.regions.js oneup.js app.js keys.js contextmenu.js lufs.js ui-fx.js ui.js modal.js state.js engine.js actions.js drag.js recorder.js multitrack.js welcome.js fx-pg-eq.js fx-auto.js local.js id3.js lzma.js | uglifyjs -c -m -o all.build.js```
+```cat vendor/wavesurfer/wavesurfer.js vendor/wavesurfer/plugin/wavesurfer.regions.js oneup.js app.js keys.js contextmenu.js lufs.js ui-fx.js ui.js modal.js state.js engine.js actions.js drag.js recorder.js multitrack.js welcome.js fx-pg-eq.js fx-auto.js local.js id3.js lzma.js | uglifyjs -c -m -o all.build.js```
 
 Thanks!
 
