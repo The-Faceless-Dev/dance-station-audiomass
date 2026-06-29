@@ -70,16 +70,22 @@
 			function loadDanceStationAudio () {
 				var params = new URLSearchParams (window.location.search);
 				var audioUrl = params.get ('ds_audio');
+				var audioName = params.get ('ds_name') || 'dance-station-audio';
 				if (!audioUrl) return;
-				if (!editor || !editor.engine || !editor.engine.LoadSample) {
+				if (!editor || !editor.engine || (!editor.engine.ForceLoadBlob && !editor.engine.LoadSample)) {
 					if (++attempts < 20) setTimeout (loadDanceStationAudio, 250);
 					return;
 				}
-				try {
-					editor.engine.LoadSample (audioUrl);
-				} catch (error) {
+				fetch (audioUrl).then (function (response) {
+					if (!response.ok) throw new Error ('Could not load audio: ' + response.status);
+					return response.blob ();
+				}).then (function (blob) {
+					var file = new File ([blob], audioName, { type: blob.type || 'audio/wav' });
+					if (editor.engine.ForceLoadBlob) editor.engine.ForceLoadBlob (file);
+					else editor.engine.LoadSample (audioUrl);
+				}).catch (function (error) {
 					console.error ('Could not load Dance Station audio asset', error);
-				}
+				});
 			}
 			setTimeout (loadDanceStationAudio, 700);
 		})();
