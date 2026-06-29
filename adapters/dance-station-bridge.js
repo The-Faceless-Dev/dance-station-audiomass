@@ -86,6 +86,24 @@
     }
   }
 
+  function loadAudioBuffer(buffer, name, mimeType) {
+    if (!buffer) {
+      window.DanceStationAudioMassBridge.error("No audio data was provided.");
+      return;
+    }
+    if (!editor || !editor.engine || !editor.engine.LoadArrayBuffer) {
+      window.DanceStationAudioMassBridge.error("AudioMass is not ready to load audio yet.");
+      return;
+    }
+    try {
+      const blob = new Blob([buffer], { type: mimeType || "audio/wav" });
+      editor.engine.LoadArrayBuffer(blob);
+      window.DanceStationAudioMassBridge.loaded({ sourceName: name || "" });
+    } catch (error) {
+      window.DanceStationAudioMassBridge.error(error && error.message ? error.message : String(error));
+    }
+  }
+
   function exportToDanceStation(name, requestId, targetWindow, targetOrigin) {
     try {
       const buffer = currentBuffer();
@@ -172,6 +190,7 @@
       emit("dance-station:request-assets", state());
     },
     loadAudio,
+    loadAudioBuffer,
     exportToDanceStation,
     downloadFile,
     ready: function () {
@@ -201,6 +220,11 @@
     if (message.type === "dance-station:load-audio") {
       const payload = message.payload || {};
       loadAudio(payload.url, payload.name);
+      return;
+    }
+    if (message.type === "dance-station:load-audio-buffer") {
+      const payload = message.payload || {};
+      loadAudioBuffer(payload.buffer, payload.name, payload.mimeType);
       return;
     }
     if (message.type === "dance-station-export-audio") {

@@ -899,12 +899,15 @@
 		(function() {
 			var input = null;
 			function loadInput ( input ) {
+				var file = input && input.files && input.files[0];
+				if (!file) return ;
+				var fileInput = { files: [ file ] };
 				if (app.multitrack &&
 					app.multitrack.LoadSessionFiles &&
-					app.multitrack.LoadSessionFiles ( input.files ))
+					app.multitrack.LoadSessionFiles ( fileInput.files ))
 				{}
-				else if (app.fireEvent ('RequestLoadPickedFiles', input.files) !== true)
-					q.LoadFile ( input );
+				else if (app.fireEvent ('RequestLoadPickedFiles', fileInput.files) !== true)
+					q.LoadFile ( fileInput );
 			}
 
 			app.listenFor ('RequestLoadLocalInput', function ( pickedInput ) {
